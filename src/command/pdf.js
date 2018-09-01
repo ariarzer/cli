@@ -7,7 +7,8 @@ function evalCalcExpression (expression) {
 }
 
 function pdf ({ root }, { output }) {
-  let browser, page
+  let browser
+  let page
 
   return Promise.resolve()
     .then(() => puppeteer.launch())

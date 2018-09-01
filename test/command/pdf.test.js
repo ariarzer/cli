@@ -4,7 +4,7 @@ const path = require('path')
 const pdfParse = require('pdf-parse')
 const { promisify } = require('util')
 
-const pdf = require('../pdf')
+const pdf = require('../../src/command/pdf')
 
 it('Must be function', () => {
   expect(typeof pdf).toBe('function')
@@ -46,5 +46,6 @@ it('must generated pdf file', async () => {
 
     expect(canonPresentation).toEqual(generatedPresentation)
   }))
-    .then(() => tempDir.removeCallback())
+
+  tempDir.removeCallback()
 })
