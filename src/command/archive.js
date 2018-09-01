@@ -16,6 +16,25 @@ function archive (_, { output, files }) {
   })
 }
 
+archive.setup = {
+  command: 'archive',
+  describe: 'Archive the project',
+  builder: yargs => yargs.options({
+    output: {
+      alias: 'o',
+      type: 'string',
+      default: 'archive.zip',
+      describe: 'Archive name'
+    },
+    files: {
+      alias: 'f',
+      array: true,
+      type: 'string',
+      describe: 'List of files that will get the build'
+    }
+  })
+}
+
 archive.config = {
   requiredExistingPresentation: true
 }

@@ -22,6 +22,25 @@ function prepare ({ root }, { output, files }) {
   })
 }
 
+prepare.setup = {
+  command: 'prepare',
+  describe: 'Prepare the project',
+  builder: yargs => yargs.options({
+    output: {
+      alias: 'o',
+      type: 'string',
+      default: 'prepared',
+      describe: 'In which folder will the prepared presentation be written'
+    },
+    files: {
+      alias: 'f',
+      array: true,
+      type: 'string',
+      describe: 'List of files that will get the build'
+    }
+  })
+}
+
 prepare.config = {
   requiredExistingPresentation: true
 }

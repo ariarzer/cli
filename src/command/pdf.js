@@ -49,6 +49,19 @@ function pdf ({ root }, { output }) {
     })
 }
 
+pdf.setup = {
+  command: 'pdf',
+  describe: 'Converts the presentation to PDF',
+  builder: yargs => yargs.options({
+    'output': {
+      alias: 'o',
+      type: 'string',
+      default: 'presentation.pdf',
+      describe: 'File name'
+    }
+  })
+}
+
 pdf.config = {
   requiredExistingPresentation: true
 }

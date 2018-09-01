@@ -1,114 +1,69 @@
-const app = require('yargs')
+const fs = require('fs')
+const path = require('path')
+const util = require('util')
 const chalk = require('chalk')
+const Listr = require('listr')
+
+const app = require('yargs')
 
 const { version } = require('../package.json')
 
 const loadConfig = require('./lib/load_config')
-const applyTask = require('./lib/apply_command')
 
-const commands = [
-  {
-    command: 'create [<directory>]',
-    describe: 'Create a new project',
-    builder: yargs => yargs
-      .positional('directory', {})
-  },
+/**
+ * Apply CLI command
+ *
+ * @param {ProjectConfig} config
+ * @param {Object} command
+ * @param {Object} options
+ * @return {Promise<void>}
+ */
+async function applyCommand (config, command, options) {
+  let { messages = {}, config: taskConfig = {} } = command
 
-  {
-    command: 'pdf',
-    describe: 'Converts the presentation to PDF',
-    builder: yargs => yargs.options({
-      'output': {
-        alias: 'o',
-        type: 'string',
-        default: 'presentation.pdf',
-        describe: 'File name'
-      }
-    })
-  },
-
-  {
-    command: 'serve',
-    describe: 'Serve a the presentation in development mode',
-    builder: yargs => yargs.options({
-      open: {
-        alias: 'o',
-        type: 'bool',
-        default: false,
-        describe: 'Open browser'
-      },
-      port: {
-        alias: 'p',
-        type: 'number',
-        default: 8080,
-        describe: 'Listening Port'
-      },
-      ui: {
-        type: 'bool',
-        default: false,
-        describe: 'Whether to run BrowserSync UI'
-      },
-      notify: {
-        type: 'bool',
-        default: false,
-        describe: 'Whether to show BrowserSync notifications'
-      }
-    })
-  },
-
-  {
-    command: 'prepare',
-    describe: 'Prepare the project',
-    builder: yargs => yargs.options({
-      output: {
-        alias: 'o',
-        type: 'string',
-        default: 'prepared',
-        describe: 'In which folder will the prepared presentation be written'
-      },
-      files: {
-        alias: 'f',
-        array: true,
-        type: 'string',
-        describe: 'List of files that will get the build'
-      }
-    })
-  },
-
-  {
-    command: 'archive',
-    describe: 'Archive the project',
-    builder: yargs => yargs.options({
-      output: {
-        alias: 'o',
-        type: 'string',
-        default: 'archive.zip',
-        describe: 'Archive name'
-      },
-      files: {
-        alias: 'f',
-        array: true,
-        type: 'string',
-        describe: 'List of files that will get the build'
-      }
-    })
-  },
-
-  {
-    command: 'publish',
-    describe: 'Publish the presentation to gh-pages',
-    builder: yargs => yargs.options({
-      files: {
-        alias: 'f',
-        array: true,
-        type: 'string',
-        describe: 'List of files that will get the build'
-      }
-    })
+  if (typeof messages === 'function') {
+    messages = messages(config, options)
   }
-]
+
+  if (taskConfig.requiredExistingPresentation && !config.project) {
+    process.stdout.write(
+      chalk`{red Shower presentation not found}\n\n` +
+      chalk`Use {yellow shower create} to create a presentation\n` +
+      chalk`Run {yellow shower create --help} to learn more\n`
+    )
+
+    return
+  }
+
+  const s = Date.now()
+
+  if (messages.start) {
+    await (new Listr([
+      {
+        title: messages.start,
+        task: () => command(config, options)
+      }
+    ])).run()
+  } else {
+    await command(config, options)
+  }
+
+  const time = ((Date.now() - s) / 1000).toFixed()
+
+  if (messages.end) {
+    process.stdout.write(`\n ${messages.end} 🎉 ${chalk.yellow(`[in ${time}s]`)}\n`)
+  }
+
+  process.exitCode = 0
+}
 
 module.exports = async function setupCLI () {
+  const commandsDir = path.join(__dirname, 'command')
+  const commandsList = util.promisify(fs.readdir)(commandsDir)
+    .filter(el => /\.js$/i.test(el))
+
+  const commands = commandsList.map(command => require(path.join(commandsDir, command)))
+
   app
     .locale('en')
     .version(version)
@@ -117,10 +72,10 @@ module.exports = async function setupCLI () {
   const config = await loadConfig()
 
   for (const command of commands) {
-    const describe = `\b- ${chalk.yellow(command.describe)}`
-    const handler = (options) => applyTask(config, command, options)
-
-    app.command(Object.assign({}, command, { describe, handler }))
+    app.command(Object.assign({}, command.setup, {
+      describe: chalk`\b- {yellow ${command.setup.describe}}`,
+      handler: (options) => applyCommand(config, command, options)
+    }))
   }
 
   // add some useful info on help

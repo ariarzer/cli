@@ -87,6 +87,13 @@ async function create ({ root }, { directory: folderName = 'slides' }) {
   await tasks.run()
 }
 
+create.setup = {
+  command: 'create [<directory>]',
+  describe: 'Create a new project',
+  builder: yargs => yargs
+    .positional('directory', {})
+}
+
 create.config = {
   requiredExistingPresentation: false
 }

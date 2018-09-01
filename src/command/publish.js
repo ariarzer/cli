@@ -40,6 +40,19 @@ function publish (_, { files }) {
     })
 }
 
+publish.setup = {
+  command: 'publish',
+  describe: 'Publish the presentation to gh-pages',
+  builder: yargs => yargs.options({
+    files: {
+      alias: 'f',
+      array: true,
+      type: 'string',
+      describe: 'List of files that will get the build'
+    }
+  })
+}
+
 publish.config = {
   requiredExistingPresentation: true
 }
