@@ -1,10 +1,10 @@
 const app = require('yargs')
 const chalk = require('chalk')
 
-const { version } = require('../../package.json')
+const { version } = require('../package.json')
 
-const loadConfig = require('./load_config')
-const applyTask = require('./apply_command')
+const loadConfig = require('./lib/load_config')
+const applyTask = require('./lib/apply_command')
 
 const commands = [
   {

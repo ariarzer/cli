@@ -27,7 +27,7 @@ process.on('SIGINT', () => {
   process.exit(0)
 })
 
-const setup = require('./core/setup_cli')
+const setup = require('../src/index')
 
 // If the node version is supported, setup CLI
 setup()

@@ -8,8 +8,8 @@ const inquirer = require('inquirer')
 const { promisify } = require('util')
 const template = require('gulp-template')
 
-const { isExist } = require('../util/files')
-const { installDependencies } = require('../util/npm')
+const { isExist } = require('../lib/files')
+const { installDependencies } = require('../lib/npm')
 
 async function create ({ root }, { directory: folderName = 'slides' }) {
   // Let's check if such folder exists

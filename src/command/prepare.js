@@ -3,7 +3,7 @@ const chalk = require('chalk')
 const path = require('path')
 const del = require('del')
 
-const { loadPresentationFiles } = require('../core/load_presentation_files')
+const { loadPresentationFiles } = require('../lib/load_presentation_files')
 
 function prepare ({ root }, { output, files }) {
   if (!path.isAbsolute(output)) {
