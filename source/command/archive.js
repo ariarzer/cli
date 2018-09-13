@@ -15,7 +15,7 @@ function archive (_, { output, files }) {
 
 archive.messages = (_, { output }) => ({
   start: 'The project is being archived',
-  end: chalk`Created archive {bold ${output}} with presentation`
+  end: chalk`Created archive {bold ${output}} with presentation `
 })
 
 module.exports = archive

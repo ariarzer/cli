@@ -87,7 +87,7 @@ async function create ({ cwd }, { directory: folderName = 'slides' }) {
 }
 
 create.messages = (_, { directory: folderName = 'slides' }) => ({
-  end: `Project created in ${chalk.bold(folderName)} dir`
+  end: `Project created in ${chalk.bold(folderName)} dir 🎉`
 })
 
 module.exports = create

@@ -24,7 +24,7 @@ function prepare ({ cwd }, { output, files }) {
 
 prepare.messages = (_, { output }) => ({
   start: 'Project preparation in progress',
-  end: chalk`Project prepared in {bold ${output}} dir`
+  end: chalk`Project prepared in {bold ${output}} dir 📦`
 })
 
 module.exports = prepare
